@@ -481,7 +481,7 @@ document.addEventListener('click', e => {
 // ══════════════════════════════════════════════════════
 // APP INIT
 // ══════════════════════════════════════════════════════
-function initApp() {
+async function initApp() {
   // Date in nav
   document.getElementById('navDate').textContent = today.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -493,8 +493,8 @@ function initApp() {
   document.documentElement.setAttribute('data-mode', savedMode);
   document.getElementById('modeToggle').textContent = savedMode === 'dark' ? '🌙' : '☀️';
 
-  // Restore saved user data
-  loadState();
+  // Restore saved user data — esperar antes de renderizar
+  await loadState();
 
   // Populate selects
   populateCatSelects();
