@@ -336,7 +336,7 @@ async function loginWithGoogle() {
   }
   const { error } = await sb.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.href }
+    options: { redirectTo: window.location.origin + window.location.pathname }
   });
   if (error) showAuthError('loginError', '⚠️ ' + error.message);
 }
