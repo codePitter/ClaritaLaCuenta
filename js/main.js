@@ -1592,8 +1592,22 @@ window.addEventListener('load', async () => {
     });
 
     // Verificar si ya hay sesión activa (ej: recarga de página con cookie válida)
+    // IMPORTANTE: llamar enterApp() directamente en vez de esperar onAuthStateChange,
+    // que puede no disparar a tiempo en recargas de página.
     const { data: { session } } = await sb.auth.getSession();
-    if (session) return; // onAuthStateChange la manejará
+    if (session?.user) {
+      const u = session.user;
+      const name = u.user_metadata?.name || u.email.split('@')[0];
+      enterApp({
+        name,
+        email:      u.email,
+        picture:    u.user_metadata?.avatar_url || u.user_metadata?.picture || null,
+        avatar:     name.charAt(0).toUpperCase(),
+        provider:   u.app_metadata?.provider || 'supabase',
+        supabaseId: u.id,
+      });
+      return;
+    }
   }
 
   // Fallback: restaurar sesión de localStorage (usuarios locales o sin Supabase)
