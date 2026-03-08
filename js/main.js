@@ -10,7 +10,7 @@
 // ══════════════════════════════════════════════════════
 const State = {
   user: null,
-  theme: 'cyber',
+  theme: 'windows',
   mode: 'dark',
   currentSection: 'dashboard',
   dashPeriod: 'month', // 'month' | 'week' | 'year'
@@ -315,51 +315,37 @@ async function saveState() {
 async function loadState() {
   if (!State.user || State.user.provider === 'demo') return;
 
-  // Función interna: leer desde localStorage ────────────────────────────────
-  function loadFromLocal() {
-    try {
-      const raw = localStorage.getItem('fc-data-' + State.user.email);
-      if (raw) {
-        applyStateData(JSON.parse(raw));
-        console.debug('[FC] Datos cargados desde localStorage ✓');
-        return true;
-      }
-    } catch { /* datos corruptos */ }
-    return false;
-  }
-
-  // Si es usuario local (sin sesión Supabase), leer directo de localStorage ─
-  if (State.user.provider === 'local') {
-    loadFromLocal();
-    return;
-  }
-
   // 1. Supabase (fuente de verdad en la nube) ───────────────────────────────
-  // Solo si tenemos supabaseId ya en State (evita round-trip lento a getUser)
-  const uid = State.user.supabaseId || null;
+  if (sb) {
+    const uid = await getSupabaseUid();
+    if (uid) {
+      try {
+        const { data: row, error } = await sb
+          .from('user_data')
+          .select('data')
+          .eq('id', uid)
+          .single();
 
-  if (sb && uid) {
-    try {
-      const { data: row, error } = await sb
-        .from('user_data')
-        .select('data')
-        .eq('id', uid)
-        .single();
-
-      if (!error && row?.data) {
-        applyStateData(row.data);
-        console.debug('[FC] Datos cargados desde Supabase ✓');
-        return;
-      }
-      if (error && error.code !== 'PGRST116') {
-        console.warn('[FC] loadState Supabase error:', error.message);
-      }
-      // PGRST116 = primera vez, no hay fila todavía → caer a localStorage
-    } catch (e) { console.warn('[FC] loadState excepción:', e); }
+        if (!error && row?.data) {
+          applyStateData(row.data);
+          console.debug('[FC] Datos cargados desde Supabase ✓');
+          return;
+        }
+        if (error && error.code !== 'PGRST116') { // PGRST116 = fila no encontrada (primera vez)
+          console.warn('[FC] loadState Supabase error:', error.message);
+        }
+      } catch (e) { console.warn('[FC] loadState excepción:', e); }
+    }
   }
 
-  // 2. localStorage (fallback: sin uid, primera vez, o error de red) ────────
-  loadFromLocal();
+  // 2. localStorage (fallback offline) ─────────────────────────────────────
+  try {
+    const raw = localStorage.getItem('fc-data-' + State.user.email);
+    if (raw) {
+      applyStateData(JSON.parse(raw));
+      console.debug('[FC] Datos cargados desde localStorage ✓');
+    }
+  } catch { /* datos corruptos — empieza en blanco */ }
 }
 
 // Indicador visual de sync en el nav (pequeño dot)
@@ -570,7 +556,7 @@ async function initApp() {
   document.getElementById('navDate').textContent = today.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 
   // Load saved prefs
-  const savedTheme = localStorage.getItem('fc-theme') || 'cyber';
+  const savedTheme = localStorage.getItem('fc-theme') || 'windows';
   const savedMode  = localStorage.getItem('fc-mode') || 'dark';
   State.theme = savedTheme; State.mode = savedMode;
   document.documentElement.setAttribute('data-theme', savedTheme);
@@ -1572,7 +1558,7 @@ function importData() {
 // ══════════════════════════════════════════════════════
 // Apply saved theme before load
 (function() {
-  const t = localStorage.getItem('fc-theme') || 'cyber';
+  const t = localStorage.getItem('fc-theme') || 'windows';
   const m = localStorage.getItem('fc-mode')  || 'dark';
   document.documentElement.setAttribute('data-theme', t);
   document.documentElement.setAttribute('data-mode', m);
