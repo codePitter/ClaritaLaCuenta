@@ -10,8 +10,8 @@
 // ══════════════════════════════════════════════════════
 const State = {
   user: null,
-  theme: 'cyber',
-  mode: 'dark',
+  theme: 'windows',
+  mode: 'light',
   currentSection: 'dashboard',
   dashPeriod: 'month', // 'month' | 'week' | 'year'
   calYear: new Date().getFullYear(),
@@ -22,6 +22,8 @@ const State = {
   debtIdCounter: 1,
   budgetIdCounter: 10,
   goalIdCounter: 1,
+  budgetYear: new Date().getFullYear(),
+  budgetMonth: new Date().getMonth(),
 
   transactions: [],
   calEvents: [],
@@ -563,7 +565,7 @@ async function initApp() {
 
   // Load saved prefs
   const savedTheme = localStorage.getItem('fc-theme') || 'windows';
-  const savedMode  = localStorage.getItem('fc-mode') || 'dark';
+  const savedMode  = localStorage.getItem('fc-mode') || 'light';
   State.theme = savedTheme; State.mode = savedMode;
   document.documentElement.setAttribute('data-theme', savedTheme);
   document.documentElement.setAttribute('data-mode', savedMode);
@@ -902,10 +904,29 @@ function deleteTx(id) {
   showToast('🗑️ Eliminada');
 }
 
-// ══════════════════════════════════════════════════════
-// PRESUPUESTO
-// ══════════════════════════════════════════════════════
+// ── Calcula el valor "Real" de un ítem de presupuesto ──────────────────────
+// Si el ítem tiene categoría asignada: suma las transacciones del mes activo.
+// Si no tiene categoría: devuelve el valor ingresado manualmente (retrocompat).
+function getItemActual(type, item, year, month) {
+  if (!item.cat) return item.actual || 0;
+  const txType = type === 'income' ? 'ingreso' : 'gasto';
+  return State.transactions
+    .filter(t => {
+      if (t.type !== txType || t.cat !== item.cat) return false;
+      const d = parseLocalDate(t.date);
+      return d.getFullYear() === year && d.getMonth() === month;
+    })
+    .reduce((a, t) => a + t.amount, 0);
+}
+
+
 function renderBudget() {
+  // Actualizar selector de mes
+  const d = new Date(State.budgetYear, State.budgetMonth, 1);
+  const lbl = d.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+  const lblEl = document.getElementById('budgetMonthLabel');
+  if (lblEl) lblEl.textContent = lbl.charAt(0).toUpperCase() + lbl.slice(1);
+
   setTimeout(initAllMathInputs, 0);
   renderBudgetSection('income', 'budgetIncome');
   renderBudgetSection('fixed', 'budgetFixed');
@@ -917,21 +938,40 @@ function renderBudget() {
 
 function renderBudgetSection(type, containerId) {
   const items = State.budget[type];
-  document.getElementById(containerId).innerHTML = items.map(item => `
-    <div class="budget-row">
+  const y = State.budgetYear;
+  const m = State.budgetMonth;
+
+  const catOptions = '<option value="">— ninguna —</option>' +
+    CATS.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+
+  document.getElementById(containerId).innerHTML = items.map(item => {
+    const computed = getItemActual(type, item, y, m);
+    const isAuto   = !!item.cat;
+
+    const catSel = `<select class="budget-cat-sel" onchange="updateBudgetCat('${type}',${item.id},this.value)">${
+      '<option value="">— ninguna —</option>' +
+      CATS.map(c => `<option value="${c.id}"${item.cat===c.id?' selected':''}>${c.label}</option>`).join('')
+    }</select>`;
+
+    const actualHtml = isAuto
+      ? `<span class="budget-actual-auto" title="Calculado automáticamente desde tus transacciones">${fmt(computed)} 🔒</span>`
+      : `<input class="budget-input" type="number" value="${item.actual}" onchange="updateBudgetAmt('${type}',${item.id},'actual',+this.value)" min="0">`;
+
+    return `<div class="budget-row">
       <input class="budget-row-name" value="${item.name}" onchange="updateBudgetName('${type}',${item.id},this.value)" placeholder="Nombre...">
+      ${catSel}
       <span class="budget-row-label">Pres.</span>
-      <input class="budget-input" type="number" value="${item.amount}" onchange="updateBudgetAmt('${type}',${item.id},'amount',+this.value)" min="0">
+      <input class="budget-input math-input" type="text" value="${item.amount}" onchange="updateBudgetAmt('${type}',${item.id},'amount',evalAmount(this.value))" min="0">
       <span class="budget-row-label">Real</span>
-      <input class="budget-input" type="number" value="${item.actual}" onchange="updateBudgetAmt('${type}',${item.id},'actual',+this.value)" min="0">
+      ${actualHtml}
       <button class="btn btn-danger btn-xs" onclick="removeBudgetRow('${type}',${item.id})">✕</button>
-    </div>
-  `).join('') || '<div class="empty-state" style="padding:14px">Sin ítems. Agregá uno.</div>';
+    </div>`;
+  }).join('') || '<div class="empty-state" style="padding:14px">Sin ítems. Agregá uno.</div>';
 }
 
 function addBudgetRow(type) {
   const maxId = Math.max(0, ...State.budget[type].map(x => x.id));
-  State.budget[type].push({ id: maxId+1, name: 'Nuevo ítem', amount: 0, actual: 0 });
+  State.budget[type].push({ id: maxId+1, name: 'Nuevo ítem', amount: 0, actual: 0, cat: '' });
   saveState();
   renderBudget();
 }
@@ -948,14 +988,30 @@ function updateBudgetAmt(type, id, field, val) {
   const item = State.budget[type].find(x => x.id === id);
   if (item) { item[field] = val; saveState(); renderBudgetSummary(); renderBudgetChart(); }
 }
+function updateBudgetCat(type, id, cat) {
+  const item = State.budget[type].find(x => x.id === id);
+  if (item) { item.cat = cat || ''; saveState(); renderBudget(); }
+}
+function budgetPrevMonth() {
+  State.budgetMonth--;
+  if (State.budgetMonth < 0) { State.budgetMonth = 11; State.budgetYear--; }
+  renderBudget();
+}
+function budgetNextMonth() {
+  State.budgetMonth++;
+  if (State.budgetMonth > 11) { State.budgetMonth = 0; State.budgetYear++; }
+  renderBudget();
+}
 
 function renderBudgetSummary() {
+  const y = State.budgetYear;
+  const m = State.budgetMonth;
   const totalInc  = State.budget.income.reduce((a,i) => a+i.amount, 0);
-  const totalIncR = State.budget.income.reduce((a,i) => a+i.actual, 0);
+  const totalIncR = State.budget.income.reduce((a,i) => a + getItemActual('income', i, y, m), 0);
   const totalFix  = State.budget.fixed.reduce((a,i) => a+i.amount, 0);
-  const totalFixR = State.budget.fixed.reduce((a,i) => a+i.actual, 0);
+  const totalFixR = State.budget.fixed.reduce((a,i) => a + getItemActual('fixed', i, y, m), 0);
   const totalVar  = State.budget.variable.reduce((a,i) => a+i.amount, 0);
-  const totalVarR = State.budget.variable.reduce((a,i) => a+i.actual, 0);
+  const totalVarR = State.budget.variable.reduce((a,i) => a + getItemActual('variable', i, y, m), 0);
   const balP = totalInc - totalFix - totalVar;
   const balR = totalIncR - totalFixR - totalVarR;
 
@@ -981,13 +1037,18 @@ function renderBudgetSummary() {
 }
 
 function renderBudgetChart() {
-  const all = [...State.budget.fixed, ...State.budget.variable];
+  const y = State.budgetYear;
+  const m = State.budgetMonth;
+  const all = [
+    ...State.budget.fixed.map(i => ({...i, _type: 'fixed'})),
+    ...State.budget.variable.map(i => ({...i, _type: 'variable'}))
+  ];
   if (!all.length) { destroyChart('chartBudget'); return; }
   makeChart('chartBudget', {
     type: 'bar',
     data: { labels: all.map(i => i.name), datasets: [
       { label: 'Presupuestado', data: all.map(i => i.amount), backgroundColor: 'rgba(88,166,255,0.4)', borderColor: '#58a6ff', borderWidth: 1, borderRadius: 4 },
-      { label: 'Real', data: all.map(i => i.actual), backgroundColor: 'rgba(240,192,64,0.4)', borderColor: '#f0c040', borderWidth: 1, borderRadius: 4 },
+      { label: 'Real', data: all.map(i => getItemActual(i._type, i, y, m)), backgroundColor: 'rgba(240,192,64,0.4)', borderColor: '#f0c040', borderWidth: 1, borderRadius: 4 },
     ]},
     options: { responsive: true, maintainAspectRatio: false, ...chartDefaults }
   });
@@ -1773,7 +1834,7 @@ function importData() {
 // Apply saved theme before load
 (function() {
   const t = localStorage.getItem('fc-theme') || 'windows';
-  const m = localStorage.getItem('fc-mode')  || 'dark';
+  const m = localStorage.getItem('fc-mode')  || 'light';
   document.documentElement.setAttribute('data-theme', t);
   document.documentElement.setAttribute('data-mode', m);
 })();

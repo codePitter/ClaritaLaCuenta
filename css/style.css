@@ -259,6 +259,115 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* ══════════════════════════════════════════════════════
+   CLARITA LA CUENTA — BRAND
+══════════════════════════════════════════════════════ */
+
+/* Auth screen logo */
+.brand-logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+.brand-logo-img {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 10px rgba(63,185,80,0.4));
+}
+.brand-logo-text-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+}
+.brand-name {
+  font-family: 'Pacifico', cursive;
+  font-size: 33px;
+  background: linear-gradient(135deg, #3fb950 0%, #58d68d 50%, #27ae60 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+}
+.brand-tagline {
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--clr-muted);
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  display: block;
+  margin-top: 3px;
+}
+.auth-logo { text-align: center; margin-bottom: 28px; }
+.auth-logo-sub {
+  font-size: 11px;
+  color: var(--clr-muted);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  display: block;
+  margin-top: 6px;
+  letter-spacing: 0.3px;
+}
+
+/* Nav bar logo */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-logo-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 5px rgba(63,185,80,0.35));
+  flex-shrink: 0;
+}
+.nav-brand-names {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.nav-brand-name {
+  font-family: 'Pacifico', cursive;
+  font-size: 17px;
+  background: linear-gradient(135deg, #3fb950, #58d68d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+}
+.nav-brand-sub {
+  font-family: 'Nunito', sans-serif;
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--clr-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: block;
+}
+
+/* Sidebar logo */
+.sidebar-logo-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 6px;
+  filter: drop-shadow(0 1px 3px rgba(63,185,80,0.3));
+}
+.sidebar-brand {
+  font-family: 'Pacifico', cursive;
+  font-size: 15px;
+  background: linear-gradient(135deg, #3fb950, #58d68d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  vertical-align: middle;
+}
+
+/* ══════════════════════════════════════════════════════
    AUTH SCREEN
 ══════════════════════════════════════════════════════ */
 .auth-screen {
@@ -285,10 +394,7 @@ a { text-decoration: none; color: inherit; }
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
   background: var(--border-top-bar); border-radius: inherit;
 }
-.auth-logo { text-align: center; margin-bottom: 28px; }
-.auth-logo-icon { font-size: 32px; display: block; color: var(--clr-accent); margin-bottom: 6px; }
-.auth-logo-text { font-family: var(--font-display); font-size: 22px; color: var(--clr-accent); letter-spacing: 4px; display: block; }
-.auth-logo-sub { font-size: 10px; color: var(--clr-muted); letter-spacing: 3px; font-family: var(--font-mono); display: block; margin-top: 2px; }
+/* brand — see CLARITA block below */
 
 .auth-tabs { display: flex; border-bottom: 1px solid var(--clr-border); margin-bottom: 24px; }
 .auth-tab { flex: 1; padding: 10px; background: transparent; border: none; color: var(--clr-muted); font-family: var(--font-display); font-size: 11px; letter-spacing: 2px; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
@@ -360,9 +466,7 @@ a { text-decoration: none; color: inherit; }
 }
 .nav-left { display: flex; align-items: center; gap: 10px; }
 .nav-hamburger { display: none; background: transparent; border: none; color: var(--clr-muted); font-size: 18px; padding: 4px; }
-.nav-brand { display: flex; flex-direction: column; }
-.nav-brand-icon { color: var(--clr-accent); font-size: 18px; margin-right: 6px; }
-.nav-brand-text { font-family: var(--font-display); font-size: 16px; color: var(--clr-accent); letter-spacing: 3px; }
+/* nav-brand — see CLARITA block below */
 
 .nav-center { display: flex; gap: 2px; align-items: center; }
 .nav-tab {
@@ -409,7 +513,7 @@ a { text-decoration: none; color: inherit; }
 .sidebar.open { left: 0; }
 .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 149; }
 .sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-.sidebar-brand { font-family: var(--font-display); color: var(--clr-accent); letter-spacing: 2px; }
+/* sidebar-brand — see CLARITA block below */
 .sidebar-header button { background: transparent; border: none; color: var(--clr-muted); font-size: 18px; }
 .sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
 .sidebar-nav button { padding: 10px 12px; background: transparent; border: none; color: var(--clr-text); font-family: var(--font-body); font-size: 14px; text-align: left; border-radius: var(--card-radius); transition: background 0.15s; }
@@ -543,13 +647,25 @@ a { text-decoration: none; color: inherit; }
 .select-inline { background: var(--clr-input); border: 1px solid var(--clr-border); border-radius: var(--card-radius); color: var(--clr-text); padding: 6px 10px; font-family: var(--font-mono); font-size: 11px; outline: none; }
 
 /* BUDGET ROWS */
-.budget-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--clr-border); }
+.budget-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--clr-border); flex-wrap: wrap; }
 .budget-row:last-child { border-bottom: none; }
-.budget-row-name { flex: 1; background: transparent; border: none; color: var(--clr-text); font-family: var(--font-body); font-size: 13px; outline: none; }
+.budget-row-name { flex: 1; min-width: 80px; background: transparent; border: none; color: var(--clr-text); font-family: var(--font-body); font-size: 13px; outline: none; }
 .budget-row-name:focus { color: var(--clr-accent); }
 .budget-row-label { font-size: 9px; color: var(--clr-muted); font-family: var(--font-mono); letter-spacing: 1px; white-space: nowrap; }
 .budget-input { background: var(--clr-input); border: 1px solid var(--clr-border); border-radius: var(--card-radius); color: var(--clr-text); padding: 5px 8px; font-size: 12px; font-family: var(--font-mono); width: 110px; text-align: right; outline: none; }
 .budget-input:focus { border-color: var(--clr-accent); }
+/* Selector de categoría */
+.budget-cat-sel { background: var(--clr-input); border: 1px solid var(--clr-border); border-radius: var(--card-radius); color: var(--clr-muted); padding: 5px 6px; font-size: 11px; font-family: var(--font-body); outline: none; cursor: pointer; min-width: 130px; }
+.budget-cat-sel:focus { border-color: var(--clr-accent); color: var(--clr-text); }
+.budget-cat-sel option { background: var(--clr-surface); }
+/* Valor real auto-calculado (🔒) */
+.budget-actual-auto { font-family: var(--font-mono); font-size: 12px; color: var(--clr-success); background: rgba(63,185,80,0.08); border: 1px solid rgba(63,185,80,0.25); border-radius: var(--card-radius); padding: 5px 8px; min-width: 110px; text-align: right; display: inline-block; cursor: default; }
+/* Nav de mes en presupuesto */
+.budget-month-nav { display: flex; align-items: center; gap: 6px; }
+.budget-month-label { font-family: var(--font-mono); font-size: 12px; color: var(--clr-accent); min-width: 140px; text-align: center; letter-spacing: 0.5px; }
+@media (max-width: 560px) {
+  .budget-cat-sel { min-width: unset; width: 100%; order: 10; }
+}
 
 /* PROGRESS BARS */
 .progress-row { margin-bottom: 12px; }
@@ -968,7 +1084,7 @@ a { text-decoration: none; color: inherit; }
 
 /* Glow effects for dark cyber/scifi */
 [data-theme="cyber"][data-mode="dark"] .kpi-value,
-[data-theme="cyber"][data-mode="dark"] .nav-brand-text { text-shadow: var(--glow-text); }
+[data-theme="cyber"][data-mode="dark"] .nav-brand-name { filter: drop-shadow(0 0 8px rgba(63,185,80,0.6)); }
 [data-theme="scifi"][data-mode="dark"] .kpi-value { text-shadow: var(--glow-text); }
 [data-theme="cyber"][data-mode="dark"] .nav-tab.active { text-shadow: 0 0 8px var(--clr-accent); }
 
