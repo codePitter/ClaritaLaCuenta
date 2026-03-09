@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FinControl — Economía Personal</title>
+  <title>ClaritaLaCuenta — Economía Personal</title>
   <style>
 /* ═══════════════════════════════════════════════════════
-   FINCONTROL — style.css
+   ClaritaLaCuenta — style.css
    4 Dark Themes + Light Mode + Base Layout
 ════════════════════════════════════════════════════════ */
 
@@ -756,7 +756,7 @@ a { text-decoration: none; color: inherit; }
     <div class="auth-card">
       <div class="auth-logo">
         <span class="auth-logo-icon">◈</span>
-        <span class="auth-logo-text">FinControl</span>
+        <span class="auth-logo-text">ClaritaLaCuenta</span>
         <span class="auth-logo-sub">Economía Personal</span>
       </div>
 
@@ -826,7 +826,7 @@ a { text-decoration: none; color: inherit; }
         <button class="nav-hamburger" onclick="toggleSidebar()" title="Menú">☰</button>
         <div class="nav-brand">
           <span class="nav-brand-icon">◈</span>
-          <span class="nav-brand-text">FinControl</span>
+          <span class="nav-brand-text">ClaritaLaCuenta</span>
         </div>
       </div>
       <div class="nav-center">
@@ -845,7 +845,7 @@ a { text-decoration: none; color: inherit; }
           <span id="avatarInitial">D</span>
           <div class="user-menu hidden" id="userMenu">
             <div class="user-menu-name" id="userMenuName">Modo Demo</div>
-            <div class="user-menu-email" id="userMenuEmail">demo@fincontrol.app</div>
+            <div class="user-menu-email" id="userMenuEmail">demo@ClaritaLaCuenta.app</div>
             <hr>
             <button onclick="openThemePanel()">🎨 Apariencia</button>
             <button onclick="exportData()">📤 Exportar datos</button>
@@ -858,7 +858,7 @@ a { text-decoration: none; color: inherit; }
     <!-- SIDEBAR (mobile) -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <span class="sidebar-brand">◈ FinControl</span>
+        <span class="sidebar-brand">◈ ClaritaLaCuenta</span>
         <button onclick="toggleSidebar()">✕</button>
       </div>
       <nav class="sidebar-nav">
@@ -1350,7 +1350,7 @@ a { text-decoration: none; color: inherit; }
 
   <script>
 /* ═══════════════════════════════════════════════════════
-   FINCONTROL — main.js
+   ClaritaLaCuenta — main.js
    Full app logic: state, charts, UI, themes, data
 ════════════════════════════════════════════════════════ */
 
@@ -1507,7 +1507,7 @@ function loginWithGoogle() {
 }
 
 function loginDemo() {
-  State.user = { name: 'Usuario Demo', email: 'demo@fincontrol.app', avatar: 'D' };
+  State.user = { name: 'Usuario Demo', email: 'demo@ClaritaLaCuenta.app', avatar: 'D' };
   document.getElementById('authScreen').classList.add('hidden');
   document.getElementById('appShell').classList.remove('hidden');
   document.getElementById('avatarInitial').textContent = 'D';
@@ -2195,7 +2195,7 @@ function exportData() {
   const data = JSON.stringify({ transactions: State.transactions, budget: State.budget, debts: State.debts, goals: State.goals, calEvents: State.calEvents }, null, 2);
   const blob = new Blob([data], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'fincontrol-data.json'; a.click();
+  const a = document.createElement('a'); a.href = url; a.download = 'ClaritaLaCuenta-data.json'; a.click();
   URL.revokeObjectURL(url);
   showToast('📤 Datos exportados');
   document.getElementById('userMenu').classList.add('hidden');

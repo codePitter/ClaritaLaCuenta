@@ -1,11 +1,11 @@
 /**
- * FinControl — fc-rescue.js
+ * ClaritaLaCuenta — fc-rescue.js
  *
  * Script de rescate: carga datos desde localStorage, los aplica al State
  * de la app y los sube a Supabase.
  *
  * CÓMO USAR (sin subir al servidor):
- *   1. Abrí la app en el navegador: codepitter.github.io/FinControl
+ *   1. Abrí la app en el navegador: codepitter.github.io/ClaritaLaCuenta
  *   2. Iniciá sesión normalmente
  *   3. Abrí DevTools → Console (F12)
  *   4. Pegá TODO este código y presioná Enter
@@ -56,7 +56,7 @@
 
   // ── 3. Aplicar al State de la app ────────────────────────────────────────
   if (typeof State === 'undefined' || typeof applyStateData === 'undefined') {
-    console.error('[RESCUE] ❌ La app no está cargada. Asegurate de estar en codepitter.github.io/FinControl con sesión activa.');
+    console.error('[RESCUE] ❌ La app no está cargada. Asegurate de estar en codepitter.github.io/ClaritaLaCuenta con sesión activa.');
     return;
   }
 

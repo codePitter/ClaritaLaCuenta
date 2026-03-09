@@ -1,4 +1,4 @@
-# ◈ FinControl — Economía Personal
+# ◈ ClaritaLaCuenta — Economía Personal
 
 > Aplicación web de gestión financiera personal. Sin frameworks, sin dependencias de servidor: HTML + CSS + JS puro, desplegable en cualquier hosting estático.
 
@@ -46,7 +46,7 @@ Abrí `index.html` en un navegador o iniciá Live Server, y usá el botón **"En
 ## Estructura del proyecto
 
 ```
-fincontrol/
+ClaritaLaCuenta/
 │
 ├── index.html              # Shell HTML: auth screen + app shell completo
 │

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
-   FINCONTROL — main.js
+   ClaritaLaCuenta — main.js
    Full app logic: state, charts, UI, themes, data
 ════════════════════════════════════════════════════════ */
 
@@ -529,7 +529,7 @@ function switchAuthTab(tab) {
 }
 
 function loginDemo() {
-  enterApp({ name: 'Usuario Demo', email: 'demo@fincontrol.app', avatar: 'D', provider: 'demo' });
+  enterApp({ name: 'Usuario Demo', email: 'demo@ClaritaLaCuenta.app', avatar: 'D', provider: 'demo' });
 }
 
 async function logout() {
@@ -1780,7 +1780,7 @@ function exportData() {
   }, null, 2);
   const blob = new Blob([data], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'fincontrol-data.json'; a.click();
+  const a = document.createElement('a'); a.href = url; a.download = 'ClaritaLaCuenta-data.json'; a.click();
   URL.revokeObjectURL(url);
   showToast('📤 Datos exportados');
   document.getElementById('userMenu').classList.add('hidden');
@@ -1801,7 +1801,7 @@ function importData() {
       // Validación mínima
       if (!data || typeof data !== 'object') throw new Error('Archivo inválido');
       const hasData = data.transactions || data.budget || data.debts || data.goals || data.calEvents;
-      if (!hasData) throw new Error('El archivo no contiene datos de FinControl');
+      if (!hasData) throw new Error('El archivo no contiene datos de ClaritaLaCuenta');
 
       const confirmed = confirm(
         `¿Importar datos de "${file.name}"?\n\nEsto REEMPLAZARÁ todos tus datos actuales. Esta acción no se puede deshacer.`
